@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Circuit Simulator (Falstad Style Dashboard)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; user-select: none; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 h-screen flex flex-col overflow-hidden">
+
+    <header class="bg-slate-800 border-b border-slate-700 px-4 py-2.5 flex items-center justify-between shadow-md z-30 flex-shrink-0">
+        <div class="flex items-center space-x-3">
+            <!-- Sidebar Toggle Button -->
+            <button id="toggle-sidebar" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 text-xs font-semibold shadow" title="ซ่อน/แสดงคู่มือทดลองต่อวงจร">
+                <i class="fa-solid fa-bars"></i>
+                <span id="toggle-text">ซ่อนคู่มือ</span>
+            </button>
+            <div class="bg-indigo-600 p-2 rounded-lg text-white">
+                <i class="fa-solid fa-bolt text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-base md:text-lg text-white tracking-wide">CircuitLab <span class="text-xs px-2 py-0.5 bg-indigo-500/30 text-indigo-300 rounded-full">Dashboard</span></h1>
+                <p class="text-xs text-slate-400 hidden sm:block">Falstad CircuitJS Integration & Interactive Workspace</p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3 text-xs text-slate-400">
+            <span>สถานะ: <strong class="text-emerald-400">ออนไลน์</strong></span>
+            <!-- Developer Profile Badge -->
+            <div class="flex items-center space-x-2 bg-slate-800/90 border border-slate-700 px-3 py-1.5 rounded-full shadow-inner ml-2">
+                <img src="https://github.com/metawat888/Picture/raw/69f9d3a46e017adc43abb8db3503ea8106ecae61/97488303_2887790847941184_353651305119481856_n.jpg" alt="นายเมธาวัฒน์ พงสะพัง" class="w-7 h-7 rounded-full object-cover border border-indigo-500 shadow" onerror="this.src='https://placehold.co/100x100/4f46e5/ffffff?text=M'" />
+                <div class="text-left hidden sm:block">
+                    <p class="text-[10px] text-slate-400 leading-none">พัฒนาโดย</p>
+                    <p class="text-xs font-semibold text-white">นายเมธาวัฒน์ พงสะพัง</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-1 flex overflow-hidden relative w-full h-full">
+
+        <!-- SIDEBAR: Floating Left Panel for Circuit Tutorials with horizontal tab selector -->
+        <div id="sidebar" class="absolute left-0 top-0 bottom-0 w-80 md:w-96 bg-slate-900/95 backdrop-blur-md border-r border-slate-700 flex flex-col z-30 transition-transform duration-300 shadow-2xl overflow-y-auto">
+            <div class="p-4 border-b border-slate-800 bg-slate-800/90 flex justify-between items-center sticky top-0 backdrop-blur z-10">
+                <div class="flex items-center space-x-2">
+                    <span class="bg-amber-500/20 text-amber-400 p-1.5 rounded-md text-xs font-bold">คู่มือการทดลอง</span>
+                    <h2 class="font-bold text-sm text-white">เลือกวงจรเพื่อทดลอง</h2>
+                </div>
+                <button id="close-sidebar" class="text-slate-400 hover:text-white p-1 rounded transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <div class="p-4 space-y-4">
+                <!-- Horizontal Tab Switcher -->
+                <div class="flex space-x-1 bg-slate-800 p-1 rounded-lg border border-slate-700 overflow-x-auto">
+                    <button id="tab-btn-1" onclick="switchCircuit(1)" class="flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all bg-indigo-600 text-white shadow truncate min-w-[38px]">
+                        วงจร 1
+                    </button>
+                    <button id="tab-btn-2" onclick="switchCircuit(2)" class="flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all text-slate-400 hover:text-white truncate min-w-[38px]">
+                        วงจร 2
+                    </button>
+                    <button id="tab-btn-3" onclick="switchCircuit(3)" class="flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all text-slate-400 hover:text-white truncate min-w-[38px]">
+                        วงจร 3
+                    </button>
+                    <button id="tab-btn-4" onclick="switchCircuit(4)" class="flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all text-slate-400 hover:text-white truncate min-w-[38px]">
+                        วงจร 4
+                    </button>
+                    <button id="tab-btn-5" onclick="switchCircuit(5)" class="flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all text-slate-400 hover:text-white truncate min-w-[38px]">
+                        วงจร 5
+                    </button>
+                    <button id="tab-btn-6" onclick="switchCircuit(6)" class="flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all text-slate-400 hover:text-white truncate min-w-[38px]">
+                        วงจร 6
+                    </button>
+                    <button id="tab-btn-7" onclick="switchCircuit(7)" class="flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all text-slate-400 hover:text-white truncate min-w-[38px]">
+                        วงจร 7
+                    </button>
+                    <button id="tab-btn-8" onclick="switchCircuit(8)" class="flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all text-slate-400 hover:text-white truncate min-w-[38px]">
+                        วงจร 8
+                    </button>
+                    <button id="tab-btn-9" onclick="switchCircuit(9)" class="flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all text-slate-400 hover:text-white truncate min-w-[38px]">
+                        วงจร 9
+                    </button>
+                    <button id="tab-btn-10" onclick="switchCircuit(10)" class="flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all text-slate-400 hover:text-white truncate min-w-[38px]">
+                        วงจร 10
+                    </button>
+                </div>
+
+                <!-- Circuit 1 Content -->
+                <div id="circuit-content-1" class="space-y-4 text-xs md:text-sm text-slate-300">
+                    <div class="space-y-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+                        <div class="flex items-center space-x-2 border-b border-slate-700/80 pb-2">
+                            <span class="bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded text-xs font-bold">วงจรที่ 1</span>
+                            <h3 class="font-bold text-white text-xs md:text-sm">วงจรไฟหรี่ (Dimmer Circuit)</h3>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-xs">
+                            ใช้งานตัวต้านทานปรับค่าได้ (Potentiometer) ร่วมกับหลอดไฟ เพื่อควบคุมระดับความสว่างในวงจรไฟฟ้า
+                        </p>
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-2 bg-indigo-950/30 p-3 rounded-xl border border-indigo-900/50">
+                        <h4 class="font-bold text-indigo-300 flex items-center space-x-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-indigo-400"></i>
+                            <span>ประโยชน์ของวงจร</span>
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pl-1">
+                            <li>ช่วยประหยัดพลังงานไฟฟ้าโดยการลดความสว่าง</li>
+                            <li>ยืดอายุการใช้งานของหลอดไฟให้อยู่นานขึ้น</li>
+                            <li>ปรับระดับความสว่างให้เหมาะสมกับการใช้งานแต่ละช่วงเวลา</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step-by-Step Instructions -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-indigo-400"></i>
+                            <span>ขั้นตอนการต่อวงจร</span>
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-indigo-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-300 text-xs">ไปที่ <code class="text-indigo-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-indigo-300 bg-slate-800 px-1 py-0.5 rounded">Inputs and Sources</code> -> <code class="text-indigo-300 bg-slate-800 px-1 py-0.5 rounded">Add Voltage Source</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-indigo-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-300 text-xs">ไปที่ <code class="text-indigo-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-indigo-300 bg-slate-800 px-1 py-0.5 rounded">Passive Components</code> -> <code class="text-indigo-300 bg-slate-800 px-1 py-0.5 rounded">Add Potentiometer</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-indigo-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-slate-300 text-xs">ไปที่ <code class="text-indigo-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-indigo-300 bg-slate-800 px-1 py-0.5 rounded">Outputs</code> -> <code class="text-indigo-300 bg-slate-800 px-1 py-0.5 rounded">Add Lamp</code> ต่อครบวงจรพร้อม Ground</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit 2 Content -->
+                <div id="circuit-content-2" class="space-y-4 text-xs md:text-sm text-slate-300 hidden">
+                    <div class="space-y-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+                        <div class="flex items-center space-x-2 border-b border-slate-700/80 pb-2">
+                            <span class="bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs font-bold">วงจรที่ 2</span>
+                            <h3 class="font-bold text-white text-xs md:text-sm">วงจรกรองความถี่ต่ำ (RC Low-Pass Filter)</h3>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-xs">
+                            วงจรกรองสัญญาณที่ประกอบด้วยตัวต้านทาน (Resistor) และตัวเก็บประจุ (Capacitor) เพื่อลดทอนสัญญาณความถี่สูงและผ่านความถี่ต่ำ
+                        </p>
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-2 bg-emerald-950/30 p-3 rounded-xl border border-emerald-900/50">
+                        <h4 class="font-bold text-emerald-300 flex items-center space-x-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                            <span>ประโยชน์ของวงจร</span>
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pl-1">
+                            <li>กรองสัญญาณรบกวน (Noise) ย่านความถี่สูงออกจากระบบ</li>
+                            <li>ใช้ในวงจรภาคจ่ายไฟเพื่อเรียงกระแสให้เรียบขึ้น</li>
+                            <li>ประยุกต์ใช้ในระบบเครื่องเสียงและระบบสื่อสารโทรคมนาคม</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step-by-Step Instructions -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-emerald-400"></i>
+                            <span>ขั้นตอนการต่อวงจร</span>
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-emerald-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-300 text-xs">เพิ่มแหล่งจ่ายสัญญาณ AC: <code class="text-emerald-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-emerald-300 bg-slate-800 px-1 py-0.5 rounded">Inputs and Sources</code> -> <code class="text-emerald-300 bg-slate-800 px-1 py-0.5 rounded">Add AC Voltage Source</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-emerald-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-300 text-xs">เพิ่มตัวต้านทานอนุกรม: <code class="text-emerald-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-emerald-300 bg-slate-800 px-1 py-0.5 rounded">Passive Components</code> -> <code class="text-emerald-300 bg-slate-800 px-1 py-0.5 rounded">Add Resistor</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-emerald-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-slate-300 text-xs">เพิ่มตัวเก็บประจุลงกราวด์: <code class="text-emerald-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-emerald-300 bg-slate-800 px-1 py-0.5 rounded">Passive Components</code> -> <code class="text-emerald-300 bg-slate-800 px-1 py-0.5 rounded">Add Capacitor</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-emerald-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                                <span class="text-slate-300 text-xs">สังเกตสัญญาณกราฟ Output ขาออกเมื่อปรับความถี่ของแหล่งจ่าย AC</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit 3 Content -->
+                <div id="circuit-content-3" class="space-y-4 text-xs md:text-sm text-slate-300 hidden">
+                    <div class="space-y-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+                        <div class="flex items-center space-x-2 border-b border-slate-700/80 pb-2">
+                            <span class="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded text-xs font-bold">วงจรที่ 3</span>
+                            <h3 class="font-bold text-white text-xs md:text-sm">วงจรขยายสัญญาณทรานซิสเตอร์ (Transistor Common Emitter)</h3>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-xs">
+                            ใช้ทรานซิสเตอร์ (BJT) เป็นอุปกรณ์หลักในการขยายขนาดสัญญาณไฟฟ้าแรงดันต่ำให้มีแอมพลิจูดสูงขึ้น
+                        </p>
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-2 bg-amber-950/30 p-3 rounded-xl border border-amber-900/50">
+                        <h4 class="font-bold text-amber-300 flex items-center space-x-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-amber-400"></i>
+                            <span>ประโยชน์ของวงจร</span>
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pl-1">
+                            <li>ขยายสัญญาณไฟฟ้าอ่อนๆ เช่น จากไมโครโฟนหรือเซนเซอร์</li>
+                            <li>ใช้เป็นพื้นฐานในภาคขยายเสียงและวงจรสวิตชิ่งอิเล็กทรอนิกส์</li>
+                            <li>ควบคุมกระแสโหลดขนาดใหญ่ด้วยสัญญาณควบคุมขนาดเล็ก</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step-by-Step Instructions -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-amber-400"></i>
+                            <span>ขั้นตอนการต่อวงจร</span>
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-amber-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-300 text-xs">เพิ่มแหล่งจ่ายไฟ DC: <code class="text-amber-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-amber-300 bg-slate-800 px-1 py-0.5 rounded">Inputs and Sources</code> -> <code class="text-amber-300 bg-slate-800 px-1 py-0.5 rounded">Add Voltage Source</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-amber-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-300 text-xs">เพิ่มทรานซิสเตอร์ NPN: <code class="text-amber-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-amber-300 bg-slate-800 px-1 py-0.5 rounded">Semiconductors</code> -> <code class="text-amber-300 bg-slate-800 px-1 py-0.5 rounded">Add Transistor (NPN)</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-amber-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-slate-300 text-xs">ต่อตัวต้านทาน Collector และ Base เพื่อไบอัสกระแสให้ทรานซิสเตอร์ทำงานในย่านแอคทีฟ</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-amber-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                                <span class="text-slate-300 text-xs">ป้อนสัญญาณอินพุตขนาดเล็กแล้ววัดแรงดันที่ขาออก (Collector)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit 4 Content -->
+                <div id="circuit-content-4" class="space-y-4 text-xs md:text-sm text-slate-300 hidden">
+                    <div class="space-y-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+                        <div class="flex items-center space-x-2 border-b border-slate-700/80 pb-2">
+                            <span class="bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded text-xs font-bold">วงจรที่ 4</span>
+                            <h3 class="font-bold text-white text-xs md:text-sm">วงจรตัวตั้งเวลา 555 Timer (Astable Multivibrator / ไฟกระพริบ LED)</h3>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-xs">
+                            ใช้งานไอซี 555 Timer ร่วมกับตัวต้านทานและตัวเก็บประจุ เพื่อสร้างสัญญาณพัลส์นาฬิกา (Clock Pulse) สำหรับขับไฟกระพริบ LED
+                        </p>
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-2 bg-rose-950/30 p-3 rounded-xl border border-rose-900/50">
+                        <h4 class="font-bold text-rose-300 flex items-center space-x-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-rose-400"></i>
+                            <span>ประโยชน์ของวงจร</span>
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pl-1">
+                            <li>สร้างสัญญาณพัลส์ความถี่คงที่สำหรับวงจรดิจิทัล</li>
+                            <li>ใช้ทำไฟกระพริบเตือนภัย ไฟประดับ หรือสัญญาณนาฬิกา</li>
+                            <li>ประยุกต์ควบคุมความเร็วรอบและระบบตั้งเวลาอัตโนมัติ</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step-by-Step Instructions -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-rose-400"></i>
+                            <span>ขั้นตอนการต่อวงจร</span>
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-rose-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-300 text-xs">เพิ่มแหล่งจ่ายไฟ DC และ Ground เพื่อเลี้ยงวงจร IC 555</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-rose-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-300 text-xs">ค้นหาและเพิ่ม IC 555 Timer: <code class="text-rose-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-rose-300 bg-slate-800 px-1 py-0.5 rounded">Outputs/Chips</code> หรือพิมพ์ค้นหาในระบบ</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-rose-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-slate-300 text-xs">ต่อตัวต้านทานและตัวเก็บประจุที่ขา 2, 6 และ 7 เพื่อกำหนดคาบเวลาความถี่</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-rose-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                                <span class="text-slate-300 text-xs">ต่อหลอด LED เข้ากับขาออก (Pin 3) เพื่อสังเกตจังหวะการกระพริบ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit 5 Content -->
+                <div id="circuit-content-5" class="space-y-4 text-xs md:text-sm text-slate-300 hidden">
+                    <div class="space-y-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+                        <div class="flex items-center space-x-2 border-b border-slate-700/80 pb-2">
+                            <span class="bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded text-xs font-bold">วงจรที่ 5</span>
+                            <h3 class="font-bold text-white text-xs md:text-sm">วงจรเรียงกระแสแบบสะพาน (Bridge Rectifier Circuit)</h3>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-xs">
+                            ใช้วงจรไดโอด 4 ตัวต่อแบบบริดจ์ เพื่อแปลงกระแสไฟฟ้าสลับ (AC) ให้กลายเป็นกระแสไฟฟ้าตรง (DC) ทิศทางเดียวตลอดรอบสัญญาณ
+                        </p>
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-2 bg-cyan-950/30 p-3 rounded-xl border border-cyan-900/50">
+                        <h4 class="font-bold text-cyan-300 flex items-center space-x-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-cyan-400"></i>
+                            <span>ประโยชน์ของวงจร</span>
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pl-1">
+                            <li>แปลงไฟบ้าน AC 220V ให้เป็นไฟ DC สำหรับอุปกรณ์อิเล็กทรอนิกส์ทั่วไป</li>
+                            <li>ใช้ประโยชน์จากกระแสทั้งซีกบวกและซีกลบอย่างคุ้มค่า</li>
+                            <li>เป็นหัวใจหลักในอะแดปเตอร์และภาคจ่ายไฟ (Power Supply)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step-by-Step Instructions -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-cyan-400"></i>
+                            <span>ขั้นตอนการต่อวงจร</span>
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-cyan-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-300 text-xs">เพิ่มแหล่งจ่ายไฟ AC: <code class="text-cyan-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-cyan-300 bg-slate-800 px-1 py-0.5 rounded">Inputs and Sources</code> -> <code class="text-cyan-300 bg-slate-800 px-1 py-0.5 rounded">Add AC Voltage Source</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-cyan-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-300 text-xs">เพิ่มไดโอด 4 ตัว: <code class="text-cyan-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-cyan-300 bg-slate-800 px-1 py-0.5 rounded">Semiconductors</code> -> <code class="text-cyan-300 bg-slate-800 px-1 py-0.5 rounded">Add Diode</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-cyan-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-slate-300 text-xs">ต่อไดโอดเรียงเป็นวงจรบริดจ์ (Diamond Shape) เชื่อมต่อระหว่างแหล่งจ่าย AC และโหลดตัวต้านทาน</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-cyan-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                                <span class="text-slate-300 text-xs">เพิ่มตัวเก็บประจุขนานที่โหลดเพื่อกรองแรงดันให้เรียบขึ้นแล้วสังเกตผลลัพธ์</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit 6 Content -->
+                <div id="circuit-content-6" class="space-y-4 text-xs md:text-sm text-slate-300 hidden">
+                    <div class="space-y-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+                        <div class="flex items-center space-x-2 border-b border-slate-700/80 pb-2">
+                            <span class="bg-violet-500/20 text-violet-400 px-2 py-0.5 rounded text-xs font-bold">วงจรที่ 6</span>
+                            <h3 class="font-bold text-white text-xs md:text-sm">วงจรแบ่งแรงดัน (Voltage Divider Circuit)</h3>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-xs">
+                            ใช้งานตัวต้านทานสองตัวต่ออนุกรมกันเพื่อแบ่งแรงดันไฟฟ้าจากแหล่งจ่ายหลักให้เป็นแรงดันย่อยตามสัดส่วนของค่าความต้านทาน
+                        </p>
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-2 bg-violet-950/30 p-3 rounded-xl border border-violet-900/50">
+                        <h4 class="font-bold text-violet-300 flex items-center space-x-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-violet-400"></i>
+                            <span>ประโยชน์ของวงจร</span>
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pl-1">
+                            <li>ลดระดับแรงดันไฟฟ้าให้เหมาะสมกับขาอินพุตของไมโครคอนโทรลเลอร์หรือเซนเซอร์</li>
+                            <li>ใช้เป็นวงจรพื้นฐานในการอ่านค่าตัวต้านทานปรับค่าได้หรือ LDR</li>
+                            <li>ออกแบบและคำนวณวงจรได้ง่ายด้วยกฎของโอห์ม</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step-by-Step Instructions -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-violet-400"></i>
+                            <span>ขั้นตอนการต่อวงจร</span>
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-violet-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-300 text-xs">เพิ่มแหล่งจ่ายไฟ DC: <code class="text-violet-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-violet-300 bg-slate-800 px-1 py-0.5 rounded">Inputs and Sources</code> -> <code class="text-violet-300 bg-slate-800 px-1 py-0.5 rounded">Add Voltage Source</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-violet-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-300 text-xs">เพิ่มตัวต้านทาน 2 ตัวต่ออนุกรมกัน: <code class="text-violet-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-violet-300 bg-slate-800 px-1 py-0.5 rounded">Passive Components</code> -> <code class="text-violet-300 bg-slate-800 px-1 py-0.5 rounded">Add Resistor</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-violet-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-slate-300 text-xs">ต่อลง Ground และเชื่อมต่อจุดกึ่งกลางระหว่างตัวต้านทานทั้งสองเพื่อวัดแรงดัน Output</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-violet-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                                <span class="text-slate-300 text-xs">คลิกขวาที่ตัวต้านทานเพื่อเปลี่ยนค่าโอห์มและสังเกตการเปลี่ยนแปลงของแรงดันที่จุดกึ่งกลาง</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit 7 Content -->
+                <div id="circuit-content-7" class="space-y-4 text-xs md:text-sm text-slate-300 hidden">
+                    <div class="space-y-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+                        <div class="flex items-center space-x-2 border-b border-slate-700/80 pb-2">
+                            <span class="bg-teal-500/20 text-teal-400 px-2 py-0.5 rounded text-xs font-bold">วงจรที่ 7</span>
+                            <h3 class="font-bold text-white text-xs md:text-sm">วงจรกรองความถี่สูง (RC High-Pass Filter)</h3>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-xs">
+                            สลับตำแหน่งตัวเก็บประจุและตัวต้านทานในวงจรกรอง เพื่อให้สัญญาณความถี่สูงผ่านไปยังเอาต์พุตได้ดีในขณะที่ลดทอนสัญญาณความถี่ต่ำ
+                        </p>
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-2 bg-teal-950/30 p-3 rounded-xl border border-teal-900/50">
+                        <h4 class="font-bold text-teal-300 flex items-center space-x-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-teal-400"></i>
+                            <span>ประโยชน์ของวงจร</span>
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pl-1">
+                            <li>บล็อกสัญญาณ DC ที่ไม่ต้องการออกจากภาคขยายหรือโหลด</li>
+                            <li>ใช้แยกสัญญาณเสียงแหลม (Tweeter) ในระบบเครื่องเสียง</li>
+                            <li>ดึงเอาสัญญาณพัลส์หรือขอบสัญญาณฉับพลัน (Transient) ในระบบดิจิทัล</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step-by-Step Instructions -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-teal-400"></i>
+                            <span>ขั้นตอนการต่อวงจร</span>
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-teal-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-300 text-xs">เพิ่มแหล่งจ่าย AC: <code class="text-teal-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-teal-300 bg-slate-800 px-1 py-0.5 rounded">Inputs and Sources</code> -> <code class="text-teal-300 bg-slate-800 px-1 py-0.5 rounded">Add AC Voltage Source</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-teal-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-300 text-xs">เพิ่มตัวเก็บประจุอนุกรมที่ทางเข้า: <code class="text-teal-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-teal-300 bg-slate-800 px-1 py-0.5 rounded">Passive Components</code> -> <code class="text-teal-300 bg-slate-800 px-1 py-0.5 rounded">Add Capacitor</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-teal-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-slate-300 text-xs">ต่อตัวต้านทานลง Ground ที่ขาออกเพื่อสร้างแรงดันตกคร่อม</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-teal-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                                <span class="text-slate-300 text-xs">ปรับเปลี่ยนความถี่ของแหล่งจ่าย AC ขึ้น-ลง แล้วสังเกตความแตกต่างของสัญญาณ Output บนกราฟ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit 8 Content -->
+                <div id="circuit-content-8" class="space-y-4 text-xs md:text-sm text-slate-300 hidden">
+                    <div class="space-y-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+                        <div class="flex items-center space-x-2 border-b border-slate-700/80 pb-2">
+                            <span class="bg-fuchsia-500/20 text-fuchsia-400 px-2 py-0.5 rounded text-xs font-bold">วงจรที่ 8</span>
+                            <h3 class="font-bold text-white text-xs md:text-sm">วงจรออสซิลเลเตอร์ เฟสชิฟต์ (Phase Shift Oscillator)</h3>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-xs">
+                            ใช้ทรานซิสเตอร์ร่วมกับเครือข่าย RC เฟสชิฟต์เพื่อสร้างสัญญาณคลื่นไซน์ (Sine Wave) แบบออสซิลเลตเองโดยไม่ต้องมีอินพุตภายนอก
+                        </p>
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-2 bg-fuchsia-950/30 p-3 rounded-xl border border-fuchsia-900/50">
+                        <h4 class="font-bold text-fuchsia-300 flex items-center space-x-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-fuchsia-400"></i>
+                            <span>ประโยชน์ของวงจร</span>
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pl-1">
+                            <li>สร้างสัญญาณทดสอบความถี่เสียง (Audio Frequency Generator)</li>
+                            <li>ใช้เป็นแหล่งกำเนิดสัญญาณอ้างอิงในเครื่องมือวัดอิเล็กทรอนิกส์</li>
+                            <li>ศึกษาหลักการป้อนกลับเชิงบวก (Positive Feedback) และเงื่อนไขของเบิร์กเฮาเซน</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step-by-Step Instructions -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-fuchsia-400"></i>
+                            <span>ขั้นตอนการต่อวงจร</span>
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-fuchsia-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-300 text-xs">เพิ่มแหล่งจ่ายไฟ DC และทรานซิสเตอร์ NPN เป็นภาคขยายหลัก</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-fuchsia-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-300 text-xs">เพิ่มเครือข่าย RC 3 ชุดต่ออนุกรมเพื่อหน่วงเฟสสัญญาณ 180 องศา: <code class="text-fuchsia-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-fuchsia-300 bg-slate-800 px-1 py-0.5 rounded">Passive Components</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-fuchsia-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-slate-300 text-xs">ป้อนสัญญาณกลับจากเอาต์พุตเข้าสู่ขาเบส (Base) ของทรานซิสเตอร์ครบวงจร</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-fuchsia-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                                <span class="text-slate-300 text-xs">รันการจำลองและสังเกตคลื่นไซน์ต่อเนื่องที่ปรากฏบนหน้าจอ Scope</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit 9 Content -->
+                <div id="circuit-content-9" class="space-y-4 text-xs md:text-sm text-slate-300 hidden">
+                    <div class="space-y-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+                        <div class="flex items-center space-x-2 border-b border-slate-700/80 pb-2">
+                            <span class="bg-lime-500/20 text-lime-400 px-2 py-0.5 rounded text-xs font-bold">วงจรที่ 9</span>
+                            <h3 class="font-bold text-white text-xs md:text-sm">วงจรเรกกูเลเตอร์แรงดันซีเนอร์ (Zener Diode Voltage Regulator)</h3>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-xs">
+                            ใช้ซีเนอร์ไดโอดรักษาแรงดันไฟฟ้าขาออกให้คงที่แม้ว่าแรงดันไฟเข้า (Input) หรือกระแสโหลดจะเปลี่ยนแปลงไป
+                        </p>
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-2 bg-lime-950/30 p-3 rounded-xl border border-lime-900/50">
+                        <h4 class="font-bold text-lime-300 flex items-center space-x-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-lime-400"></i>
+                            <span>ประโยชน์ของวงจร</span>
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pl-1">
+                            <li>ป้องกันอุปกรณ์อิเล็กทรอนิกส์จากแรงดันไฟกระชากหรือไฟเกิน</li>
+                            <li>ให้แรงดันไฟเลี้ยง DC ที่เสถียรสำหรับวงจรไมโครคอนโทรลเลอร์และเซนเซอร์</li>
+                            <li>โครงสร้างเรียบง่ายและต้นทุนต่ำในการรักษาเสถียรภาพแรงดัน</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step-by-Step Instructions -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-lime-400"></i>
+                            <span>ขั้นตอนการต่อวงจร</span>
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-lime-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-300 text-xs">เพิ่มแหล่งจ่ายไฟ DC แรงดันสูงกว่าซีเนอร์: <code class="text-lime-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-lime-300 bg-slate-800 px-1 py-0.5 rounded">Inputs and Sources</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-lime-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-300 text-xs">เพิ่มตัวต้านทานจำกัดกระแสต่ออนุกรม และเพิ่มซีเนอร์ไดโอดต่อกลับขั้วลงกราวด์: <code class="text-lime-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-lime-300 bg-slate-800 px-1 py-0.5 rounded">Semiconductors</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-lime-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-slate-300 text-xs">ต่อโหลดตัวต้านทานขนานคร่อมกับซีเนอร์ไดโอดเพื่อดึงกระแสใช้งาน</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-lime-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                                <span class="text-slate-300 text-xs">ทดลองปรับค่าแหล่งจ่ายไฟเข้าแล้ววัดแรงดันตกคร่อมที่โหลดว่าจะคงที่ตามค่าซีเนอร์</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Circuit 10 Content -->
+                <div id="circuit-content-10" class="space-y-4 text-xs md:text-sm text-slate-300 hidden">
+                    <div class="space-y-2 bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+                        <div class="flex items-center space-x-2 border-b border-slate-700/80 pb-2">
+                            <span class="bg-sky-500/20 text-sky-400 px-2 py-0.5 rounded text-xs font-bold">วงจรที่ 10</span>
+                            <h3 class="font-bold text-white text-xs md:text-sm">วงจรเปรียบเทียบแรงดัน (Op-Amp Comparator / สวิตช์แสงอัตโนมัติ)</h3>
+                        </div>
+                        <p class="text-slate-300 leading-relaxed text-xs">
+                            ใช้ไอซีขยายสัญญาณปฏิบัติการ (Operational Amplifier) ทำหน้าที่เปรียบเทียบแรงดันระหว่างอินพุตสองขาเพื่อตัดสินใจเปิด-ปิดรีเลย์หรือ LED
+                        </p>
+                    </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-2 bg-sky-950/30 p-3 rounded-xl border border-sky-900/50">
+                        <h4 class="font-bold text-sky-300 flex items-center space-x-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-sky-400"></i>
+                            <span>ประโยชน์ของวงจร</span>
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1 text-slate-300 text-xs pl-1">
+                            <li>ประยุกต์ใช้ทำวงจรเปิดปิดไฟถนนอัตโนมัติตามแสงสว่าง (LDR Sensor)</li>
+                            <li>ใช้เป็นวงจรตรวจจับอุณหภูมิหรือระดับน้ำในถัง</li>
+                            <li>แปลงสัญญาณอนาล็อกให้เป็นสัญญาณดิจิทัล (High/Low) สำหรับไมโครคอนโทรลเลอร์</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step-by-Step Instructions -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                            <i class="fa-solid fa-list-ol text-sky-400"></i>
+                            <span>ขั้นตอนการต่อวงจร</span>
+                        </h4>
+                        <div class="space-y-2">
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-sky-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">1</span>
+                                <span class="text-slate-300 text-xs">เพิ่มแหล่งจ่ายไฟ DC คู่ (+V / -V) และ Op-Amp: <code class="text-sky-300 bg-slate-800 px-1 py-0.5 rounded">Draw</code> -> <code class="text-sky-300 bg-slate-800 px-1 py-0.5 rounded">Active Components</code> / <code class="text-sky-300 bg-slate-800 px-1 py-0.5 rounded">Outputs/Chips</code></span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-sky-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">2</span>
+                                <span class="text-slate-300 text-xs">ต่อตัวต้านทานแบ่งแรงดันที่ขาไม่กลับเฟส (+) เพื่อกำหนดค่าแรงดันอ้างอิง (Threshold)</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-sky-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">3</span>
+                                <span class="text-slate-300 text-xs">ต่อตัวต้านทานปรับค่าได้หรือ LDR ที่ขา (-) เพื่อรับสัญญาณอินพุตเซนเซอร์</span>
+                            </div>
+                            <div class="flex items-start space-x-2 bg-slate-800/50 p-2.5 rounded-lg border border-slate-800">
+                                <span class="bg-sky-600 text-white w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">4</span>
+                                <span class="text-slate-300 text-xs">ต่อหลอด LED ที่ขาออก (Output) แล้วปรับค่าสัญญาณอินพุตเพื่อดูจังหวะสลับสถานะติด/ดับ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VIEW: Falstad Official Embed (Takes 100% full width and height) -->
+        <div id="view-embed" class="flex-1 flex flex-col bg-slate-950 relative h-full w-full">
+            <div class="bg-slate-900/80 px-4 py-1.5 border-b border-slate-800 flex justify-between items-center text-xs text-slate-400 pl-12 md:pl-16">
+                <span>กำลังจำลองวงจรด้วย Falstad CircuitJS</span>
+                <a href="https://www.falstad.com/circuit/circuitjs.html" target="_blank" class="text-indigo-400 hover:underline flex items-center space-x-1">
+                    <span>เปิดแบบเต็มจอในแท็บใหม่</span> <i class="fa-solid fa-external-link text-[10px]"></i>
+                </a>
+            </div>
+            <div class="flex-1 w-full h-full relative">
+                <iframe src="https://www.falstad.com/circuit/circuitjs.html" class="w-full h-full border-0 absolute inset-0" title="Falstad Circuit Simulator"></iframe>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggle-sidebar');
+        const closeBtn = document.getElementById('close-sidebar');
+        const toggleText = document.getElementById('toggle-text');
+
+        function toggleSidebarState() {
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                toggleText.textContent = 'ซ่อนคู่มือ';
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                toggleText.textContent = 'แสดงคู่มือ';
+            }
+        }
+
+        toggleBtn.addEventListener('click', toggleSidebarState);
+        closeBtn.addEventListener('click', toggleSidebarState);
+
+        function switchCircuit(circuitNumber) {
+            for (let i = 1; i <= 10; i++) {
+                const btn = document.getElementById(`tab-btn-${i}`);
+                const content = document.getElementById(`circuit-content-${i}`);
+                if (btn) {
+                    btn.className = "flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all text-slate-400 hover:text-white truncate min-w-[38px]";
+                }
+                if (content) {
+                    content.classList.add('hidden');
+                }
+            }
+
+            const activeBtn = document.getElementById(`tab-btn-${circuitNumber}`);
+            const activeContent = document.getElementById(`circuit-content-${circuitNumber}`);
+            
+            const colorClasses = {
+                1: "bg-indigo-600 text-white shadow",
+                2: "bg-emerald-600 text-white shadow",
+                3: "bg-amber-600 text-white shadow",
+                4: "bg-rose-600 text-white shadow",
+                5: "bg-cyan-600 text-white shadow",
+                6: "bg-violet-600 text-white shadow",
+                7: "bg-teal-600 text-white shadow",
+                8: "bg-fuchsia-600 text-white shadow",
+                9: "bg-lime-600 text-white shadow",
+                10: "bg-sky-600 text-white shadow"
+            };
+
+            if (activeBtn) {
+                activeBtn.className = `flex-1 py-2 px-1 rounded-md text-[9px] md:text-[10px] font-bold transition-all truncate min-w-[38px] ${colorClasses[circuitNumber] || "bg-indigo-600 text-white shadow"}`;
+            }
+            if (activeContent) {
+                activeContent.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
