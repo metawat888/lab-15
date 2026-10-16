@@ -19,12 +19,20 @@
                 <i class="fa-solid fa-bars"></i>
                 <span id="toggle-text">ซ่อนคู่มือ</span>
             </button>
-            <div class="bg-indigo-600 p-2 rounded-lg text-white">
+            
+            <!-- Component Guide Button -->
+            <button id="open-component-guide" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg transition-colors flex items-center space-x-1.5 text-xs font-semibold shadow" title="ศึกษาหลักการและหน้าที่ของอุปกรณ์แต่ละตัว">
+                <i class="fa-solid fa-microchip"></i>
+                <span class="hidden sm:inline">ศึกษาหลักการและหน้าที่อุปกรณ์</span>
+                <span class="sm:hidden">อุปกรณ์</span>
+            </button>
+
+            <div class="bg-indigo-600 p-2 rounded-lg text-white hidden md:block">
                 <i class="fa-solid fa-bolt text-lg"></i>
             </div>
-            <div>
+            <div class="hidden lg:block">
                 <h1 class="font-bold text-base md:text-lg text-white tracking-wide">CircuitLab <span class="text-xs px-2 py-0.5 bg-indigo-500/30 text-indigo-300 rounded-full">Dashboard</span></h1>
-                <p class="text-xs text-slate-400 hidden sm:block">Falstad CircuitJS Integration & Interactive Workspace</p>
+                <p class="text-xs text-slate-400">Falstad CircuitJS Integration & Interactive Workspace</p>
             </div>
         </div>
 
@@ -624,11 +632,329 @@
 
     </div>
 
+    <!-- Component Guide Modal -->
+    <div id="component-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="component-modal-content">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-700 bg-slate-800/90 flex justify-between items-center sticky top-0 z-10">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-amber-500/20 text-amber-400 p-2 rounded-lg">
+                        <i class="fa-solid fa-microchip text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-lg text-white">หลักการและหน้าที่ของอุปกรณ์อิเล็กทรอนิกส์</h2>
+                        <p class="text-xs text-slate-400">คู่มือศึกษาพื้นฐานเพื่อการต่อวงจร</p>
+                    </div>
+                </div>
+                <button id="close-component-modal" class="text-slate-400 hover:text-white bg-slate-700/50 hover:bg-slate-600 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="p-6 overflow-y-auto bg-slate-900/50 flex-1 custom-scrollbar">
+                
+                <!-- Section 1: Passive Components -->
+                <h3 class="text-indigo-400 font-bold text-sm mb-4 border-b border-indigo-500/30 pb-2 flex items-center space-x-2">
+                    <i class="fa-solid fa-layer-group"></i> <span>อุปกรณ์พาสซีฟ (Passive Components)</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                    <!-- Resistor -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ตัวต้านทาน (Resistor)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-minus"></i><i class="fa-solid fa-slash"></i><i class="fa-solid fa-minus"></i></span>
+                        </div>
+                        <p class="text-[10px] text-indigo-300 mb-2 font-mono bg-indigo-900/30 inline-block px-2 py-0.5 rounded">สัญลักษณ์: R | หน่วย: Ohm (Ω)</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ทำหน้าที่จำกัดการไหลของกระแสไฟฟ้าและลดระดับแรงดันในวงจร เป็นอุปกรณ์พื้นฐานที่สุดตามกฎของโอห์ม (V = I × R) มีทั้งแบบค่าคงที่ (Carbon/Metal Film) ซึ่งอ่านค่าได้จากรหัสแถบสีบนตัวอุปกรณ์ และทนกำลังวัตต์ได้ต่างกัน (เช่น 1/4W, 1/2W)
+                        </p>
+                    </div>
+                    <!-- Potentiometer -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ตัวต้านทานปรับค่าได้ (Potentiometer)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-sliders"></i></span>
+                        </div>
+                        <p class="text-[10px] text-indigo-300 mb-2 font-mono bg-indigo-900/30 inline-block px-2 py-0.5 rounded">สัญลักษณ์: VR / Pot</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ตัวต้านทานที่มี 3 ขา สามารถหมุนเลื่อนหน้าสัมผัสเพื่อเปลี่ยนค่าความต้านทานได้ มักใช้เป็นตัวแบ่งแรงดัน (Voltage Divider) ปรับระดับเสียง (Volume) ควบคุมความสว่างหลอดไฟ หรือตั้งค่าความไวของเซนเซอร์
+                        </p>
+                    </div>
+                    <!-- LDR -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ตัวต้านทานพึ่งแสง (LDR / Photoresistor)</h4>
+                            <span class="text-slate-400"><i class="fa-regular fa-sun"></i></span>
+                        </div>
+                        <p class="text-[10px] text-indigo-300 mb-2 font-mono bg-indigo-900/30 inline-block px-2 py-0.5 rounded">สัญลักษณ์: LDR</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ตัวต้านทานที่จะมีค่าความต้านทานสูงมากเมื่ออยู่ในที่มืด (หลัก Mega-Ohm) และค่าความต้านทานจะลดลงต่ำเมื่อมีแสงสว่างตกกระทบ (หลักร้อย Ohm) ใช้ในวงจรเปิด-ปิดไฟถนนอัตโนมัติ หรือเซนเซอร์ตรวจจับแสง
+                        </p>
+                    </div>
+                    <!-- Capacitor -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ตัวเก็บประจุ (Capacitor)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-bars font-bold text-lg"></i></span>
+                        </div>
+                        <p class="text-[10px] text-indigo-300 mb-2 font-mono bg-indigo-900/30 inline-block px-2 py-0.5 rounded">สัญลักษณ์: C | หน่วย: Farad (F)</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ทำหน้าที่สะสมและคายประจุไฟฟ้า บล็อกไฟฟ้ากระแสตรง (DC) ไม่ให้ผ่าน แต่ยอมให้กระแสสลับ (AC) ผ่านได้ มีแบบมีขั้ว (Electrolytic - นิยมใช้กรองไฟให้เรียบ) และแบบไม่มีขั้ว (Ceramic/Mylar - นิยมใช้กรองความถี่สูง)
+                        </p>
+                    </div>
+                    <!-- Inductor -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ตัวเหนี่ยวนำ (Inductor / Coil)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-dna rotate-90"></i></span>
+                        </div>
+                        <p class="text-[10px] text-indigo-300 mb-2 font-mono bg-indigo-900/30 inline-block px-2 py-0.5 rounded">สัญลักษณ์: L | หน่วย: Henry (H)</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ลวดทองแดงพันเป็นขดลวด สะสมพลังงานในรูปสนามแม่เหล็ก มีคุณสมบัติต่อต้านการเปลี่ยนแปลงของกระแสไฟฟ้า ยอมให้ DC ผ่านได้ดีแต่ขัดขวาง AC ใช้ร่วมกับตัวเก็บประจุสร้างวงจรจูนความถี่วิทยุหรือวงจรกรอง (Filter)
+                        </p>
+                    </div>
+                    <!-- Transformer -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-indigo-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">หม้อแปลงไฟฟ้า (Transformer)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-bolt-lightning"></i></span>
+                        </div>
+                        <p class="text-[10px] text-indigo-300 mb-2 font-mono bg-indigo-900/30 inline-block px-2 py-0.5 rounded">สัญลักษณ์: T</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ประกอบด้วยขดลวดปฐมภูมิ (Primary) และทุติยภูมิ (Secondary) ใช้หลักการเหนี่ยวนำแม่เหล็กไฟฟ้าเพื่อแปลงแรงดันไฟฟ้ากระแสสลับ (AC) ให้สูงขึ้น (Step-up) หรือต่ำลง (Step-down) แยกระบบกราวด์ทางไฟฟ้าเพื่อความปลอดภัย
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 2: Semiconductors -->
+                <h3 class="text-emerald-400 font-bold text-sm mb-4 border-b border-emerald-500/30 pb-2 flex items-center space-x-2">
+                    <i class="fa-solid fa-bolt"></i> <span>อุปกรณ์สารกึ่งตัวนำ (Semiconductors)</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                    <!-- Diode -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ไดโอด (Rectifier Diode)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-play"></i><i class="fa-solid fa-grip-lines-vertical"></i></span>
+                        </div>
+                        <p class="text-[10px] text-emerald-300 mb-2 font-mono bg-emerald-900/30 inline-block px-2 py-0.5 rounded">สัญลักษณ์: D</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ทำจากรอยต่อ P-N ยอมให้กระแสไหลทิศทางเดียวจาก Anode ไป Cathode (Forward Bias) และบล็อกกระแสย้อนกลับ มีแรงดันตกคร่อมประมาณ 0.7V (Silicon) หน้าที่หลักคือแปลงไฟ AC เป็น DC ในวงจรภาคจ่ายไฟ
+                        </p>
+                    </div>
+                    <!-- Schottky Diode -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ชอตต์กีไดโอด (Schottky Diode)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-play"></i><i class="fa-solid fa-s"></i></span>
+                        </div>
+                        <p class="text-[10px] text-emerald-300 mb-2 font-mono bg-emerald-900/30 inline-block px-2 py-0.5 rounded">สัญลักษณ์: D</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ไดโอดชนิดพิเศษที่มีแรงดันตกคร่อมต่ำมาก (ประมาณ 0.15V - 0.4V) และสามารถสลับสถานะ (Switching) ได้เร็วมาก มักใช้ในวงจรภาคจ่ายไฟแบบสวิตชิ่ง (SMPS) วงจรความถี่สูง และวงจรป้องกันการต่อกลับขั้วแบบลดความร้อน
+                        </p>
+                    </div>
+                    <!-- Zener Diode -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ซีเนอร์ไดโอด (Zener Diode)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-play"></i><i class="fa-solid fa-z"></i></span>
+                        </div>
+                        <p class="text-[10px] text-emerald-300 mb-2 font-mono bg-emerald-900/30 inline-block px-2 py-0.5 rounded">สัญลักษณ์: ZD</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ออกแบบมาให้ทำงานในย่านไบอัสกลับ (Reverse Bias) เมื่อถึงแรงดันซีเนอร์ (Breakdown Voltage) มันจะยอมให้กระแสไหลผ่านเพื่อรักษาระดับแรงดันตกคร่อมตัวมันให้คงที่ ใช้ทำวงจรเรกกูเลเตอร์แรงดัน หรือป้องกันแรงดันเกิน (Overvoltage)
+                        </p>
+                    </div>
+                    <!-- LED -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ไดโอดเปล่งแสง (LED)</h4>
+                            <span class="text-slate-400"><i class="fa-regular fa-lightbulb"></i></span>
+                        </div>
+                        <p class="text-[10px] text-emerald-300 mb-2 font-mono bg-emerald-900/30 inline-block px-2 py-0.5 rounded">สัญลักษณ์: LED</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Light Emitting Diode เปล่งแสงเมื่อได้รับไบอัสตรง มีการใช้พลังงานต่ำ สีของแสงขึ้นอยู่กับสารกึ่งตัวนำที่ใช้ ต้องต่อตัวต้านทานอนุกรมเสมอเพื่อจำกัดกระแส (ปกติใช้ไฟประมาณ 10-20mA) ไม่ให้หลอดขาด
+                        </p>
+                    </div>
+                    <!-- Transistor (BJT) -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ทรานซิสเตอร์ (BJT)</h4>
+                            <span class="text-slate-400"><i class="fa-brands fa-y-combinator"></i></span>
+                        </div>
+                        <p class="text-[10px] text-emerald-300 mb-2 font-mono bg-emerald-900/30 inline-block px-2 py-0.5 rounded">ชนิด: NPN / PNP (ขา B, C, E)</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            หัวใจของวงจรอิเล็กทรอนิกส์ ทำหน้าที่ขยายสัญญาณ (Amplifier) หรือเป็นสวิตช์เปิด-ปิดกระแส (Switching) ควบคุมกระแสขนาดใหญ่ที่ไหลผ่านขั้ว C-E ด้วยการป้อนกระแสควบคุมขนาดเล็กเข้าที่ขั้ว B (Base) ทำงานด้วยการควบคุมกระแส
+                        </p>
+                    </div>
+                    <!-- MOSFET -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">มอสเฟต (MOSFET)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-chart-gantt rotate-90"></i></span>
+                        </div>
+                        <p class="text-[10px] text-emerald-300 mb-2 font-mono bg-emerald-900/30 inline-block px-2 py-0.5 rounded">ชนิด: N-Ch / P-Ch (ขา G, D, S)</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ทรานซิสเตอร์สนามไฟฟ้า ควบคุมการไหลของกระแสระหว่างขั้ว D และ S ด้วยระดับแรงดันไฟฟ้า (Voltage) ที่ขั้ว G (Gate) มีความต้านทานอินพุตสูงมาก นิยมใช้เป็นสวิตช์อิเล็กทรอนิกส์ประสิทธิภาพสูง รองรับกระแสได้มาก เกิดความร้อนต่ำ
+                        </p>
+                    </div>
+                    <!-- SCR / Triac -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-emerald-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">เอสซีอาร์ / ไตรแอค (SCR / Triac)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-bolt-lightning"></i></span>
+                        </div>
+                        <p class="text-[10px] text-emerald-300 mb-2 font-mono bg-emerald-900/30 inline-block px-2 py-0.5 rounded">ตระกูล: Thyristor</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            สารกึ่งตัวนำประเภทไทริสเตอร์ SCR ทำหน้าที่เป็นสวิตช์สำหรับไฟฟ้ากระแสตรงที่ทนกำลังสูง ส่วน Triac ทำหน้าที่เป็นสวิตช์ควบคุมไฟฟ้ากระแสสลับ (AC) นำทางได้ทั้งสองซีก นิยมใช้ในวงจรหรี่ไฟ (Dimmer) เครื่องซักผ้า และเตาอบ
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 3: ICs & Others -->
+                <h3 class="text-rose-400 font-bold text-sm mb-4 border-b border-rose-500/30 pb-2 flex items-center space-x-2">
+                    <i class="fa-solid fa-memory"></i> <span>วงจรรวมและดิจิทัล (Integrated Circuits & Digital)</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                    <!-- Op-Amp -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-rose-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ออปแอมป์ (Op-Amp)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-play rotate-90"></i></span>
+                        </div>
+                        <p class="text-[10px] text-rose-300 mb-2 font-mono bg-rose-900/30 inline-block px-2 py-0.5 rounded">เบอร์ยอดฮิต: LM358, 741</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            วงจรขยายสัญญาณปฏิบัติการ มีอัตราขยายสูงมากในอุดมคติ ประกอบด้วยขา Inverting (-) และ Non-Inverting (+) ใช้สำหรับสร้างวงจรขยายเสียง วงจรเปรียบเทียบแรงดัน (Comparator) วงจรบวก/ลบสัญญาณ วงจรกรองความถี่แบบแอคทีฟ
+                        </p>
+                    </div>
+                    <!-- 555 Timer -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-rose-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ไอซี 555 (555 Timer IC)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-microchip"></i></span>
+                        </div>
+                        <p class="text-[10px] text-rose-300 mb-2 font-mono bg-rose-900/30 inline-block px-2 py-0.5 rounded">โหมด: Astable, Monostable</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ไอซีอเนกประสงค์ยอดนิยมที่สุด ทำหน้าที่สร้างสัญญาณพัลส์หรือสัญญาณนาฬิกา (Clock) หรือตั้งหน่วงเวลา (Timer) การทำงานขึ้นอยู่กับการต่อเครือข่าย R และ C ภายนอก ใช้ทำไฟกระพริบ ไซเรน หรือวงจร PWM ควบคุมมอเตอร์
+                        </p>
+                    </div>
+                    <!-- Logic Gates -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-rose-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ลอจิกเกต (Logic Gates)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-network-wired"></i></span>
+                        </div>
+                        <p class="text-[10px] text-rose-300 mb-2 font-mono bg-rose-900/30 inline-block px-2 py-0.5 rounded">ตระกูล: 74LS, 4000 series</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            พื้นฐานของวงจรดิจิทัลและคอมพิวเตอร์ ประมวลผลสถานะลอจิก 0 (Low) และ 1 (High) ประกอบด้วยเกตพื้นฐานเช่น AND, OR, NOT, NAND, NOR นำมาต่อร่วมกันเพื่อสร้างวงจรบวกเลข นับเลข หรือวงจรเข้ารหัสข้อมูล
+                        </p>
+                    </div>
+                    <!-- Voltage Regulator -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-rose-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ไอซีรักษาระดับแรงดัน (Voltage Regulator)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-car-battery"></i></span>
+                        </div>
+                        <p class="text-[10px] text-rose-300 mb-2 font-mono bg-rose-900/30 inline-block px-2 py-0.5 rounded">เบอร์ยอดฮิต: 7805, 7812, LM317</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ไอซีที่ทำหน้าที่รักษาระดับแรงดันไฟฟ้าขาออก (Output) ให้คงที่เสมอ แม้แรงดันขาเข้า (Input) จะแกว่งตัวหรือกระแสโหลดเปลี่ยนแปลง เช่น 7805 จะให้ไฟออก 5V คงที่ เหมาะสำหรับเลี้ยงวงจรไมโครคอนโทรลเลอร์หรือเซนเซอร์
+                        </p>
+                    </div>
+                    <!-- Optocoupler -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-rose-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ออปโตคัปเปลอร์ (Optocoupler)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-eye"></i></span>
+                        </div>
+                        <p class="text-[10px] text-rose-300 mb-2 font-mono bg-rose-900/30 inline-block px-2 py-0.5 rounded">เบอร์ยอดฮิต: PC817</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ภายในประกอบด้วย LED และ Phototransistor ใช้แสงในการถ่ายทอดสัญญาณ ทำหน้าที่แยกวงจรไฟฟ้าสองฝั่งออกจากกันโดยเด็ดขาด (Galvanic Isolation) ป้องกันฝั่งควบคุมไมโครคอนโทรลเลอร์ไม่ให้พังจากไฟกระชากฝั่งมอเตอร์หรือโหลดไฟสลับ
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 4: Electromechanical & Misc -->
+                <h3 class="text-amber-400 font-bold text-sm mb-4 border-b border-amber-500/30 pb-2 flex items-center space-x-2">
+                    <i class="fa-solid fa-plug"></i> <span>อุปกรณ์ไฟฟ้าและเครื่องกล (Electromechanical & Others)</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                    <!-- Relay -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">รีเลย์ (Relay)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-toggle-on"></i></span>
+                        </div>
+                        <p class="text-[10px] text-amber-300 mb-2 font-mono bg-amber-900/30 inline-block px-2 py-0.5 rounded">สวิตช์แม่เหล็กไฟฟ้า</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            ใช้กระแสไฟฟ้าไฟต่ำจ่ายเข้าขดลวดเพื่อสร้างสนามแม่เหล็ก ดูดหน้าสัมผัสสวิตช์กลไกให้ติดกัน (COM ต่อกับ NO/NC) ทำให้วงจรควบคุมสมองกลขนาดเล็ก (เช่น Arduino 5V) สามารถเปิด-ปิดเครื่องใช้ไฟฟ้า 220V ได้อย่างปลอดภัย
+                        </p>
+                    </div>
+                    <!-- Switch -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">สวิตช์ (Switch / Push Button)</h4>
+                            <span class="text-slate-400"><i class="fa-regular fa-hand-pointer"></i></span>
+                        </div>
+                        <p class="text-[10px] text-amber-300 mb-2 font-mono bg-amber-900/30 inline-block px-2 py-0.5 rounded">สถานะ: NO (ปกติเปิด) / NC (ปกติปิด)</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            อุปกรณ์เชิงกลสำหรับตัดหรือต่อเส้นทางเดินของกระแสไฟฟ้า มีหลายแบบ เช่น สวิตช์ปุ่มกดติดปล่อยดับ (Tactile Switch) สวิตช์สลับทาง (Toggle) หรือไมโครสวิตช์ ใช้ป้อนสัญญาณข้อมูลหรือควบคุมการทำงานด้วยผู้ใช้งาน
+                        </p>
+                    </div>
+                    <!-- Fuse -->
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 hover:border-amber-500/50 transition-colors">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-sm">ฟิวส์ (Fuse)</h4>
+                            <span class="text-slate-400"><i class="fa-solid fa-fire-extinguisher"></i></span>
+                        </div>
+                        <p class="text-[10px] text-amber-300 mb-2 font-mono bg-amber-900/30 inline-block px-2 py-0.5 rounded">อุปกรณ์ป้องกันภัย</p>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            เส้นลวดขนาดเล็กที่ตั้งใจให้ออกแบบมาให้ละลายขาดและตัดวงจร หากมีกระแสไฟฟ้าไหลผ่านมากเกินพิกัด (Overcurrent) หรือเกิดไฟฟ้าลัดวงจร ป้องกันไม่ให้อุปกรณ์ชิ้นอื่นไหม้ลุกลามหรือเกิดเพลิงไหม้
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const sidebar = document.getElementById('sidebar');
         const toggleBtn = document.getElementById('toggle-sidebar');
         const closeBtn = document.getElementById('close-sidebar');
         const toggleText = document.getElementById('toggle-text');
+        
+        // Component Guide Modal
+        const componentModal = document.getElementById('component-modal');
+        const componentModalContent = document.getElementById('component-modal-content');
+        const openGuideBtn = document.getElementById('open-component-guide');
+        const closeGuideBtn = document.getElementById('close-component-modal');
+
+        // Modal opening/closing logic with animation
+        function openComponentModal() {
+            componentModal.classList.remove('hidden');
+            // Allow display block to apply before adding animation classes
+            setTimeout(() => {
+                componentModalContent.classList.remove('scale-95', 'opacity-0');
+                componentModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeComponentModal() {
+            componentModalContent.classList.remove('scale-100', 'opacity-100');
+            componentModalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                componentModal.classList.add('hidden');
+            }, 300); // Wait for transition
+        }
+
+        openGuideBtn.addEventListener('click', openComponentModal);
+        closeGuideBtn.addEventListener('click', closeComponentModal);
+        
+        // Close modal when clicking outside
+        componentModal.addEventListener('click', (e) => {
+            if (e.target === componentModal) {
+                closeComponentModal();
+            }
+        });
 
         function toggleSidebarState() {
             if (sidebar.classList.contains('-translate-x-full')) {
